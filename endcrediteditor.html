@@ -3,279 +3,302 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Endroll Maker</title>
+<title>End Roll Tool</title>
+
 <style>
-  body {
-    margin: 0;
-    background: black;
-    color: white;
-    font-family: "Arial", sans-serif;
-    overflow: hidden;
-  }
+/* ボタン装飾 */
+button {
+  margin:5px 0;
+  padding:8px 14px;
+  font-size:1em;
+  font-weight:600;
+  color:white;
+  background:rgba(255,255,255,0.1);
+  border:1px solid rgba(255,255,255,0.3);
+  border-radius:8px;
+  backdrop-filter: blur(6px);
+  cursor:pointer;
+  transition: all 0.2s ease;
+}
 
-  #rollContainer {
-    position: relative;
-    width: 100%;
-    height: 100vh;
-    overflow: hidden;
-  }
+button:hover {
+  background:rgba(255,255,255,0.2);
+  transform: translateY(-2px);
+  box-shadow:0 4px 10px rgba(0,0,0,0.5);
+}
 
-  #rollContent {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    text-align: center;
-  }
+/* テキストボックス装飾 */
+textarea, input[type="range"] {
+  width:100%;
+  padding:8px;
+  border-radius:6px;
+  border:1px solid rgba(255,255,255,0.3);
+  background:rgba(255,255,255,0.05);
+  color:white;
+  backdrop-filter: blur(4px);
+  transition: all 0.2s ease;
+}
 
-  #rollContent p {
-    margin: 1em 0;
-    font-size: 24px;
-  }
+textarea:focus, input[type="range"]:focus {
+  outline:none;
+  border-color:rgba(255,255,255,0.6);
+  background:rgba(255,255,255,0.1);
+}
 
-  #controls, #coords {
-    z-index: 10;
-    transition: opacity 0.3s;
-  }
+/* ラベルも少し見やすく */
+label {
+  margin-top:8px;
+  font-weight:500;
+  color:#eee;
+}
+body{
+  margin:0;
+  background:black;
+  color:white;
+  font-family:Georgia, 'Yu Mincho', 'MS Mincho', serif;
+  overflow:hidden;
+}
 
-  #controls {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    max-width: 240px;
-    background: rgba(30,30,30,0.85);
-    padding: 15px;
-    border-radius: 12px;
-  }
+#rollContainer{
+  position:relative;
+  width:100%;
+  height:100vh;
+  overflow:hidden;
+}
 
-  #coords {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: 1em;
-    color: yellow;
-  }
+#rollContent{
+  position:absolute;
+  bottom:0;
+  width:100%;
+  text-align:center;
+}
 
-  /* ボタンスタイル */
-  button {
-    margin: 5px 0;
-    padding: 8px 14px;
-    font-size: 1em;
-    background: #1e90ff;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: 0.2s;
-  }
+#rollContent p{
+  margin:1em 0;
+  font-size:24px;
+}
 
-  button:hover {
-    background: #63b3ff;
-  }
+#controls,#coords{
+  z-index:10;
+  transition:opacity .3s;
+}
 
-  button:active {
-    transform: scale(0.95);
-  }
+#controls{
+  position:absolute;
+  top:10px;
+  left:10px;
+  max-width:230px;
+}
 
-  /* テキストエリアとセレクト */
-  textarea, select, input[type="range"] {
-    width: 100%;
-    margin: 5px 0;
-    padding: 6px 10px;
-    border-radius: 6px;
-    border: 1px solid #555;
-    background: #222;
-    color: white;
-    font-size: 1em;
-    box-sizing: border-box;
-  }
+button,input,textarea{
+  margin:5px 0;
+  padding:6px 10px;
+  font-size:1em;
+}
 
-  textarea:focus, select:focus, input[type="range"]:focus {
-    outline: 2px solid #1e90ff;
-  }
+#coords{
+  position:absolute;
+  top:10px;
+  right:10px;
+  font-size:1em;
+  color:yellow;
+}
 
-  #textEditor {
-    display: flex;
-    flex-direction: column;
-    margin-top: 10px;
-  }
+#textEditor{
+  display:flex;
+  flex-direction:column;
+  margin-top:10px;
+}
 
-  #textEditor label {
-    margin-top: 10px;
-  }
+#textEditor textarea{
+  width:210px;
+  height:110px;
+  resize:none;
+  background:#222;
+  color:white;
+  border:1px solid #555;
+}
 
-  #fontSizeRange, #speedRange {
-    margin-top: 5px;
-  }
-
-  /* スライダー色 */
-  input[type="range"] {
-    -webkit-appearance: none;
-    height: 6px;
-    background: #555;
-    border-radius: 3px;
-  }
-  input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 16px;
-    height: 16px;
-    background: #1e90ff;
-    border-radius: 50%;
-    cursor: pointer;
-  }
-  input[type="range"]::-moz-range-thumb {
-    width: 16px;
-    height: 16px;
-    background: #1e90ff;
-    border-radius: 50%;
-    cursor: pointer;
-  }
+#bindInfo{
+  margin-top:10px;
+  padding:8px;
+  background:#111;
+  border:1px solid #444;
+  font-size:12px;
+  line-height:1.5;
+}
 </style>
 </head>
+
 <body>
 
 <div id="rollContainer">
-  <div id="rollContent">
-    <p>制作：ooz</p>
-    <p>音楽：作曲者名</p>
-    <p>協力：スタッフ名1</p>
-    <p>協力：スタッフ名2</p>
-    <p>協力：スタッフ名3</p>
-    <p>Special Thanks</p>
-    <p>ご覧いただきありがとうございます</p>
-  </div>
+  <div id="rollContent"></div>
 </div>
 
 <div id="controls">
-  <button id="hudBtn">HUD切替</button>
-  <button id="startBtn">Start</button>
-  <button id="stopBtn">Stop</button>
 
-  <div id="textEditor">
-    <label for="textInput">流れる文字:</label>
-    <textarea id="textInput"></textarea>
-    <button id="applyTextBtn">反映</button>
+<button id="hudBtn">HUD切替</button>
+<button id="startBtn">Start</button>
+<button id="stopBtn">Stop</button>
 
-    <label for="fontSelect">フォント:</label>
-    <select id="fontSelect">
-      <option value="Arial, sans-serif">Arial</option>
-      <option value="Verdana, sans-serif">Verdana</option>
-      <option value="'Times New Roman', serif">Times New Roman</option>
-      <option value="'Courier New', monospace">Courier New</option>
-      <option value="'MS Gothic', monospace">MS Gothic (ゴシック体)</option>
-      <option value="'MS Mincho', serif">MS Mincho (明朝体)</option>
-      <option value="'Yu Mincho', serif">Yu Mincho (明朝体)</option>
-      <option value="'Yu Gothic', sans-serif">Yu Gothic (ゴシック体)</option>
-      <option value="'Meiryo', sans-serif">Meiryo (メイリオ)</option>
-      <option value="'Comic Sans MS', cursive">Comic Sans (手書き風)</option>
-      <option value="'Lucida Console', monospace">Lucida Console</option>
-      <option value="'Palatino Linotype', serif">Palatino</option>
-      <option value="'Georgia', serif">Georgia</option>
-    </select>
+<div id="textEditor">
 
-    <label for="fontSizeRange">文字サイズ: <span id="fontSizeLabel">24</span>px</label>
-    <input type="range" id="fontSizeRange" min="10" max="100" value="24">
+<label>流れる文字</label>
+<textarea id="textInput"></textarea>
 
-    <label for="speedRange">スクロール速度: <span id="speedLabel">1</span>px/frame</label>
-    <input type="range" id="speedRange" min="0.1" max="10" step="0.1" value="1">
-  </div>
+<label>文字サイズ <span id="fontSizeLabel">24</span>px</label>
+<input type="range" id="fontSizeRange" min="10" max="120" value="24">
+
+<label>スクロール速度 <span id="speedLabel">1</span></label>
+<input type="range" id="speedRange" min="0.1" max="10" step="0.1" value="1">
+
+</div>
+
+<div id="bindInfo">
+<b>Commands / Bind</b><br>
+#タイトル → 超大きい<br>
+@タイトル → セクション<br>
+.スタッフ → スタッフ文字<br>
+!30! テキスト → サイズ指定<br>
+Space → Start / Stop
+</div>
+
 </div>
 
 <div id="coords">Bottom: 0px</div>
 
 <script>
-const content = document.getElementById('rollContent');
-const coords = document.getElementById('coords');
-const textInput = document.getElementById('textInput');
-const applyTextBtn = document.getElementById('applyTextBtn');
-const fontSelect = document.getElementById('fontSelect');
-const fontSizeRange = document.getElementById('fontSizeRange');
-const fontSizeLabel = document.getElementById('fontSizeLabel');
-const speedRange = document.getElementById('speedRange');
-const speedLabel = document.getElementById('speedLabel');
-const controls = document.getElementById('controls');
-const hudBtn = document.getElementById('hudBtn');
+const content=document.getElementById('rollContent')
+const coords=document.getElementById('coords')
+const textInput=document.getElementById('textInput')
+const fontSizeRange=document.getElementById('fontSizeRange')
+const fontSizeLabel=document.getElementById('fontSizeLabel')
+const speedRange=document.getElementById('speedRange')
+const speedLabel=document.getElementById('speedLabel')
+const controls=document.getElementById('controls')
+const hudBtn=document.getElementById('hudBtn')
 
-let interval;
-let speed = parseFloat(speedRange.value);
-const resetThreshold = 1000000;
-let hudVisible = true;
-let isRolling = false;
+let interval
+let speed=parseFloat(speedRange.value)
+const resetThreshold=1000000
+let hudVisible=true
+let isRolling=false
 
-// HUD切替
-hudBtn.addEventListener('click', () => {
-  hudVisible = !hudVisible;
-  controls.style.opacity = hudVisible ? 1 : 0;
-  coords.style.opacity = hudVisible ? 1 : 0;
-});
+function applyText(){
+  const lines=textInput.value.split('\n')
+  content.innerHTML=''
 
-// Start / Stop
-function startRoll() {
-  if (isRolling) return;
-  isRolling = true;
-  const contentHeight = content.offsetHeight;
-  content.style.bottom = -contentHeight + 'px';
-  coords.textContent = 'Bottom: ' + (-contentHeight) + 'px';
+  lines.forEach(line=>{
+    const p=document.createElement('p')
 
-  interval = setInterval(() => {
-    let bottom = parseFloat(getComputedStyle(content).bottom);
-    content.style.bottom = (bottom + speed) + 'px';
-    coords.textContent = 'Bottom: ' + Math.round(bottom) + 'px';
-    if (bottom > resetThreshold) {
-      content.style.bottom = -contentHeight + 'px';
+    if(line.trim()===""){
+      p.innerHTML="&nbsp;"
+      content.appendChild(p)
+      return
     }
-  }, 16);
+
+    let size=fontSizeRange.value
+
+    if(line.startsWith("#")){
+      p.textContent=line.substring(1)
+      size=60
+      p.style.fontWeight="bold"
+    }
+    else if(line.startsWith("@")){
+      p.textContent=line.substring(1)
+      size=40
+      p.style.fontWeight="bold"
+    }
+    else if(line.startsWith(".")){
+      p.textContent=line.substring(1)
+      size=20
+    }
+    else{
+      const match=line.match(/^!(\d+)!\s*(.*)/)
+      if(match){
+        size=match[1]
+        p.textContent=match[2]
+      }else{
+        p.textContent=line
+      }
+    }
+
+    p.style.fontSize=size+"px"
+    content.appendChild(p)
+  })
+
+  // フォント固定（Georgia + 日本語フォールバック）
+  document.body.style.fontFamily = "Georgia, 'Yu Mincho', 'MS Mincho', serif"
+  content.style.fontFamily = "Georgia, 'Yu Mincho', 'MS Mincho', serif"
 }
 
-function stopRoll() {
-  clearInterval(interval);
-  interval = null;
-  isRolling = false;
+hudBtn.onclick=()=>{
+  hudVisible=!hudVisible
+  controls.style.opacity=hudVisible?1:0
+  coords.style.opacity=hudVisible?1:0
 }
 
-// Start/Stopボタン
-document.getElementById('startBtn').addEventListener('click', startRoll);
-document.getElementById('stopBtn').addEventListener('click', stopRoll);
+function startRoll(){
+  if(isRolling)return
+  isRolling=true
+  const contentHeight=content.offsetHeight
+  content.style.bottom=-contentHeight+"px"
+  coords.textContent="Bottom: "+(-contentHeight)+"px"
 
-// スペースキーでStart/Stop切替
-document.addEventListener('keydown', (e) => {
-  if (e.code === 'Space') {
-    e.preventDefault();
-    if (isRolling) stopRoll();
-    else startRoll();
+  interval=setInterval(()=>{
+    let bottom=parseFloat(content.style.bottom)
+    bottom+=speed
+    content.style.bottom=bottom+"px"
+    coords.textContent="Bottom: "+Math.round(bottom)+"px"
+    if(bottom>resetThreshold){
+      content.style.bottom=-contentHeight+"px"
+    }
+  },16)
+}
+
+function stopRoll(){
+  clearInterval(interval)
+  isRolling=false
+}
+
+document.getElementById('startBtn').onclick=startRoll
+document.getElementById('stopBtn').onclick=stopRoll
+
+document.addEventListener("keydown",e=>{
+  if(e.code==="Space"){
+    e.preventDefault()
+    if(isRolling) stopRoll()
+    else startRoll()
   }
-});
+})
 
-// 文字変更
-applyTextBtn.addEventListener('click', () => {
-  const lines = textInput.value.split('\n');
-  content.innerHTML = '';
-  lines.forEach(line => {
-    const p = document.createElement('p');
-    p.textContent = line;
-    content.appendChild(p);
-  });
-});
+textInput.addEventListener("input",applyText)
+fontSizeRange.oninput=()=>{
+  fontSizeLabel.textContent=fontSizeRange.value
+  applyText()
+}
+speedRange.oninput=()=>{
+  speed=parseFloat(speedRange.value)
+  speedLabel.textContent=speed
+}
 
-// 初期テキストをtextareaに反映
-textInput.value = Array.from(content.querySelectorAll('p')).map(p => p.textContent).join('\n');
+/* 初期テキスト */
+textInput.value=`#作品タイトル
 
-// フォント変更
-fontSelect.addEventListener('change', () => {
-  content.style.fontFamily = fontSelect.value;
-});
+.監督
+名前
 
-// 文字サイズ変更
-fontSizeRange.addEventListener('input', () => {
-  const size = fontSizeRange.value;
-  fontSizeLabel.textContent = size;
-  content.querySelectorAll('p').forEach(p => p.style.fontSize = size + 'px');
-});
+.音楽
+作曲者
 
-// 速度変更
-speedRange.addEventListener('input', () => {
-  speed = parseFloat(speedRange.value);
-  speedLabel.textContent = speed;
-});
+!56!SPECIAL THANKS
+
+スタッフA
+スタッフB
+`
+
+applyText()
 </script>
 
 </body>
