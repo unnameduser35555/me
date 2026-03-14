@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;}
+body{margin:0;height:100vh;display:flex;align-items:center;justify-content:center;font-family:Poppins,sans-serif;background:#01010a;color:white;overflow:hidden;transition:background .35s ease;}
+.bg{position:fixed;inset:0;background:radial-gradient(circle at 20% 30%, rgba(120,0,255,.35), transparent 45%),radial-gradient(circle at 80% 70%, rgba(0,90,255,.35), transparent 45%),linear-gradient(#01010a,#020617);filter:blur(3px);animation:auroraFlow 60s linear infinite, aurora 30s ease infinite alternate;transform:translateZ(0);transition:all .35s ease;}
+@keyframes aurora{0%{filter:blur(3px) hue-rotate(0deg)}100%{filter:blur(3px) hue-rotate(40deg)}}
+@keyframes auroraFlow{0%{background-position:0 0,50% 50%}100%{background-position:100% 0,50% 100%}}
+.star{position:fixed;width:2px;height:2px;background:white;opacity:.8;border-radius:50%;transition:all .35s ease;}
+.hub{width:min(420px,92vw);padding:30px;border-radius:24px;background:rgba(255,255,255,.08);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.1);box-shadow:0 40px 100px rgba(0,0,0,.8);animation:fade 1s ease;transform:translateZ(0);z-index:10;transition:all .35s ease;}
+@keyframes fade{0%{opacity:0;transform:translateY(30px)}100%{opacity:1}}
+h1{margin:0;font-size:22px;}
+.desc{opacity:.7;font-size:13px;margin-bottom:10px;}
+.topBtns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0;}
+.modeBtn{flex:1 1 calc(25% - 6px);padding:8px;border-radius:8px;font-size:12px;color:white;background:linear-gradient(135deg,#7a5cff,#35a7ff);transition:all .35s ease;border:1px solid rgba(255,255,255,.1);}
+.modeBtn.active{box-shadow:0 0 5px rgba(120,150,255,.8);}
+.links{display:flex;flex-direction:column;gap:12px;width:100%;}
+.link{display:flex;align-items:center;gap:12px;padding:14px;border-radius:14px;text-decoration:none;color:white;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.1);transition:all .35s ease;}
+.link:hover{transform:translateY(-2px);}
+.ico{width:24px;height:24px;flex-shrink:0;border-radius:10px;overflow:hidden;background:#111;transition:all .35s ease;}
+.ico img{width:100%;height:100%;object-fit:contain;transition:filter .35s ease;}
+.rmBtn{flex-shrink:0;padding:6px 8px;border-radius:8px;border:none;background:rgba(255,255,255,.12);color:white;font-size:12px;transition:all .35s ease;}
+.addRow{display:flex;gap:8px;margin-top:10px;}
+.addRow input{flex:1;min-width:0;padding:10px;border-radius:8px;background:rgba(255,255,255,.1);color:white;border:1px solid rgba(255,255,255,.1);transition:all .35s ease;}
+.addRow button{padding:10px;border-radius:8px;background:linear-gradient(135deg,#7a5cff,#35a7ff);color:white;border:1px solid rgba(255,255,255,.1);transition:all .35s ease;}
+.box{margin-top:12px;display:flex;gap:8px;}
+.box input{flex:1;min-width:0;padding:12px;font-size:16px;border-radius:10px;background:rgba(255,255,255,.1);color:white;border:1px solid rgba(255,255,255,.1);transition:all .35s ease;}
+button.go{padding:12px 16px;border-radius:10px;background:linear-gradient(135deg,#7a5cff,#35a7ff);color:white;border:1px solid rgba(255,255,255,.1);transition:all .35s ease;}
+body.normal .ico{background:rgba(0,0,0,0.4);}body.normal .ico img{filter:brightness(1);}
+body.night .ico img, body.stealth .ico img, body.oled .ico img{filter:brightness(0.5);}
+body.night{background:#000;color:#777;}body.night .bg,body.night .star{opacity:0;}body.night .hub{background:#000;border:1px solid #111;box-shadow:none;}body.night .link{background:#000;border:1px solid #333;color:#aaa;}body.night .ico{background:#111;}body.night .addRow input,body.night .box input,body.night .addRow button,body.night .go,body.night .rmBtn,body.night .modeBtn,body.night #gsearchInput,body.night #gsearchBtn{background: rgba(5,5,5,.9); color: #ccc; border:1px solid #333;}body.night .modeBtn.active{box-shadow:0 0 5px rgba(180,120,255,.7);}
+body.stealth{background:#000;}body.stealth .bg,body.stealth .star{opacity:0;}body.stealth .hub{background:#000;border:1px solid #222;box-shadow:none;backdrop-filter:none;}body.stealth .link{background:#000;border:1px solid #222;color:#777;}body.stealth .ico{background:#111;}body.stealth .addRow input,body.stealth .box input,body.stealth .addRow button,body.stealth .go,body.stealth .rmBtn,body.stealth .modeBtn,body.stealth #gsearchInput,body.stealth #gsearchBtn{background:#000;color:#777;border:1px solid #222;}body.stealth .modeBtn.active{box-shadow:0 0 5px rgba(120,120,120,.7);}
+body.oled{background:#000;color:#555;}body.oled .bg,body.oled .star{opacity:0;}body.oled .hub{background:#000;border:1px solid #080808;box-shadow:none;}body.oled .link{background:#000;border:1px solid #080808;color:#666;}body.oled .ico{background:#050505;}body.oled .addRow input,body.oled .box input,body.oled .addRow button,body.oled .go,body.oled .rmBtn,body.oled .modeBtn,body.oled #gsearchInput,body.oled #gsearchBtn{background:#050505;color:#666;border:1px solid #080808;}body.oled .modeBtn.active{box-shadow:0 0 5px rgba(50,200,255,.7);}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="hub">
+<h1>URL Hub</h1>
+<div class="desc">Eazy access</div>
+<div class="topBtns">
+<button class="modeBtn" onclick="setMode('normal')">NORMAL</button>
+<button class="modeBtn" onclick="setMode('stealth')">STEALTH</button>
+<button class="modeBtn" onclick="setMode('night')">NIGHT</button>
+<button class="modeBtn" onclick="setMode('oled')">OLED</button>
+</div>
+<div class="links" id="links"></div>
+<div class="addRow">
+<input id="nameInput" placeholder="Button Name">
+<input id="urlInput2" placeholder="URL">
+<button onclick="addBtn()">ADD</button>
+</div>
+<div class="box">
+<input id="urlInput" type="password" placeholder="URL Jumper">
+<button class="go" onclick="go()">GO</button>
+</div>
+<div class="box" style="margin-top:8px;">
+<input id="gsearchInput" placeholder="Google検索" type="text">
+<button class="go" id="gsearchBtn" onclick="gsearch()">Search</button>
+</div>
+</div>
+<audio id="nightSound" loop src="night_sound.mp3"></audio>
+<audio id="stealthSound" loop src="tick.mp3"></audio>
+<audio id="oledSound" loop src="beep.mp3"></audio>
+<script>
+let canPlayAudio = false;
+document.body.addEventListener("click", ()=>{ canPlayAudio = true; }, {once:true});
+
+const STAR_ICON=`data:image/svg+xml;base64,${btoa(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="white"><polygon points="32,6 38,24 58,24 42,36 46,56 32,44 18,56 22,36 6,24 26,24"/></svg>`)}`;
+function getFavicon(url){try{let u=new URL(url);return "https://www.google.com/s2/favicons?domain="+u.hostname+"&sz=64";}catch{return STAR_ICON;}}
+const LINKS=[{name:"YouTube",url:"https://youtube.com"},{name:"Discord",url:"https://discord.com"},{name:"Twitter",url:"https://twitter.com"}];
+let custom=JSON.parse(localStorage.getItem("customLinks")||"[]");
+
+function render(){
+  const container=document.getElementById("links");
+  container.innerHTML="";
+  LINKS.forEach(link=>{
+    let icon=getFavicon(link.url);
+    const a=document.createElement("a");
+    a.className="link";
+    a.href=link.url;
+    a.target="_blank";
+    a.innerHTML=`<div class="ico"><img src="${icon}"></div><div style="flex:1">${link.name}</div>`;
+    container.appendChild(a);
+  });
+  custom.forEach((l,i)=>{
+    let icon=STAR_ICON;
+    let url=l.url;
+    if(!url.startsWith("http://")&&!url.startsWith("https://")) url="https://"+url;
+    const a=document.createElement("a");
+    a.className="link";
+    a.href=url;
+    a.target="_blank";
+    a.innerHTML=`<div class="ico"><img src="${icon}" class="starIcon"></div><div style="flex:1">${l.name}</div><button class="rmBtn" onclick="del(${i})">DEL</button>`;
+    container.appendChild(a);
+  });
+  updateStarBrightness();
+  updateStarsLayer();
+}
+
+function updateStarBrightness(){
+  const stars=document.querySelectorAll(".starIcon");
+  let theme="normal";
+  if(document.body.classList.contains("night")) theme="night";
+  else if(document.body.classList.contains("stealth")) theme="stealth";
+  else if(document.body.classList.contains("oled")) theme="oled";
+  stars.forEach(img=>{
+    if(theme==="normal") img.style.filter="brightness(1)";
+    else if(theme==="night") img.style.filter="brightness(0.3)";
+    else if(theme==="stealth") img.style.filter="brightness(0.4)";
+    else if(theme==="oled") img.style.filter="brightness(0.7)";
+  });
+}
+
+function updateStarsLayer(){
+  const stars=document.querySelectorAll(".star");
+  if(document.body.classList.contains("normal")) stars.forEach(s=>s.style.zIndex=5);
+  else stars.forEach(s=>s.style.zIndex=0);
+}
+
+function addBtn(){
+  let name=document.getElementById("nameInput").value;
+  let url=document.getElementById("urlInput2").value;
+  if(!name||!url)return;
+  if(custom.length>=2){alert("max 2 buttons");return}
+  custom.push({name:name,url:url});
+  localStorage.setItem("customLinks",JSON.stringify(custom));
+  location.reload();
+}
+function del(i){custom.splice(i,1);localStorage.setItem("customLinks",JSON.stringify(custom));location.reload();}
+function go(){let v=document.getElementById("urlInput").value.trim();if(!v)return;if(!v.startsWith("http://")&&!v.startsWith("https://")) v="https://"+v;window.location.href=v;}
+function gsearch(){let q=document.getElementById("gsearchInput").value.trim();if(!q)return;window.open("https://www.google.com/search?q="+encodeURIComponent(q),"_blank");}
+document.getElementById("nameInput").addEventListener("keydown",e=>{if(e.key==="Enter") addBtn()});
+document.getElementById("urlInput2").addEventListener("keydown",e=>{if(e.key==="Enter") addBtn()});
+
+for(let i=0;i<60;i++){const s=document.createElement("div");s.className="star";s.style.width=s.style.height=Math.random()*2+1+"px";s.style.top=Math.random()*100+"%";s.style.left=Math.random()*100+"%";s.style.opacity=Math.random()*0.5+0.3;document.body.appendChild(s);}
+
+function playThemeSound(mode){
+  if(!canPlayAudio) return;
+  const night=document.getElementById("nightSound");
+  const stealth=document.getElementById("stealthSound");
+  const oled=document.getElementById("oledSound");
+  [night,stealth,oled].forEach(s=>{s.pause();s.currentTime=0;});
+  if(mode==="night") night.play().catch(()=>{});
+  if(mode==="stealth") stealth.play().catch(()=>{});
+  if(mode==="oled") oled.play().catch(()=>{});
+}
+
+function setMode(mode){
+  const elems=[document.querySelector(".hub"),
+               ...document.querySelectorAll(".link"),
+               ...document.querySelectorAll(".modeBtn"),
+               document.querySelector(".bg"),
+               ...document.querySelectorAll(".star")];
+  elems.forEach(el=>el.style.transition="all .35s ease");
+  document.body.classList.remove("stealth","night","oled");
+  document.querySelectorAll(".modeBtn").forEach(b=>b.classList.remove("active"));
+  if(mode!=="normal"){document.body.classList.add(mode);}
+  document.querySelector(`[onclick="setMode('${mode}')"]`)?.classList.add("active");
+  localStorage.setItem("hub_mode",mode);
+  updateStarBrightness();
+  updateStarsLayer();
+  playThemeSound(mode);
+}
+
+const saved=localStorage.getItem("hub_mode");
+if(saved) setMode(saved);
+render();
+</script>
+</body>
+</html>
