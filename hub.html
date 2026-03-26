@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Hub</title>
+<title>hub</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;}
@@ -41,8 +41,8 @@ body.oled{background:#000;color:#555;}body.oled .bg,body.oled .star{opacity:0;}b
 <body>
 <div class="bg"></div>
 <div class="hub">
-<h1>URL Hub</h1>
-<div class="desc">Eazy access</div>
+<h1>Hub</h1>
+<div class="desc">Quick access</div>
 <div class="topBtns">
 <button class="modeBtn" onclick="setMode('normal')">NORMAL</button>
 <button class="modeBtn" onclick="setMode('stealth')">STEALTH</button>
@@ -171,6 +171,274 @@ function setMode(mode){
 const saved=localStorage.getItem("hub_mode");
 if(saved) setMode(saved);
 render();
+</script>
+<!-- ▼ MEMO / LINK（カード右上ボタン） -->
+<div class="topRightBtns">
+  <div id="memoToggle">MEMO</div>
+  <div id="linkToggle">LINK</div>
+</div>
+
+<!-- ▼ MEMO -->
+<div id="memoPanel">
+<textarea id="memoInput" placeholder="メモ..."></textarea>
+</div>
+
+<!-- ▼ LINK -->
+<div id="linkPanel">
+<div id="linkList"></div>
+<div class="linkAdd">
+<input id="linkName" placeholder="Name">
+<input id="linkURL" placeholder="URL">
+<button class="linkAddBtn" onclick="addLinkTab()">+</button>
+</div>
+</div>
+
+<style>
+/* ===== 右上配置（hub内） ===== */
+.hub{position:relative;}
+
+.topRightBtns{
+position:absolute;
+top:12px;
+right:14px;
+display:flex;
+gap:6px;
+z-index:1000;
+}
+
+/* ===== トグル（テーマ一致） ===== */
+#memoToggle,#linkToggle{
+padding:6px 10px;
+border-radius:8px;
+font-size:11px;
+cursor:pointer;
+transition:.25s;
+
+/* normal */
+background:rgba(255,255,255,.08);
+border:1px solid rgba(255,255,255,.12);
+color:#ddd;
+backdrop-filter:blur(6px);
+}
+
+#memoToggle:hover,#linkToggle:hover{
+transform:translateY(-1px);
+background:rgba(255,255,255,.14);
+}
+
+#memoToggle.active,#linkToggle.active{
+box-shadow:0 0 6px rgba(120,150,255,.5);
+}
+
+/* ===== パネル（最前面＆押せる） ===== */
+#memoPanel,#linkPanel{
+position:absolute;
+top:52px;
+right:0;
+width:260px;
+
+border-radius:14px;
+background:rgba(255,255,255,.08);
+backdrop-filter:blur(12px);
+border:1px solid rgba(255,255,255,.1);
+
+/* 🔥 ここ重要（押せない対策） */
+z-index:2000;
+
+/* アニメ */
+opacity:0;
+transform:translateY(10px) scale(.95);
+pointer-events:none;
+transition:all .3s ease;
+}
+
+#memoPanel.open,#linkPanel.open{
+opacity:1;
+transform:translateY(0) scale(1);
+pointer-events:auto;
+}
+
+#memoPanel{height:200px;}
+#linkPanel{max-height:300px;display:flex;flex-direction:column;}
+
+/* ===== MEMO ===== */
+#memoInput{
+width:100%;
+height:100%;
+padding:10px;
+background:transparent;
+border:none;
+color:white;
+outline:none;
+resize:none;
+}
+
+/* ===== LINK ===== */
+#linkList{
+overflow-y:auto;
+padding:8px;
+display:flex;
+flex-direction:column;
+gap:6px;
+}
+
+.linkItem{
+display:flex;
+align-items:center;
+gap:6px;
+padding:6px 8px;
+border-radius:8px;
+background:rgba(255,255,255,.1);
+cursor:pointer;
+min-width:0;
+}
+.linkItem span{
+flex:1;
+overflow:hidden;
+text-overflow:ellipsis;
+white-space:nowrap;
+}
+.linkItem button{
+background:none;
+border:none;
+color:#ff5555;
+}
+
+/* ===== 追加欄 ===== */
+.linkAdd{
+display:flex;
+gap:6px;
+padding:6px;
+border-top:1px solid rgba(255,255,255,.08);
+}
+.linkAdd input{
+flex:1;
+min-width:0;
+padding:5px;
+border-radius:6px;
+background:rgba(255,255,255,.1);
+border:1px solid rgba(255,255,255,.1);
+color:white;
+}
+.linkAddBtn{
+padding:5px 8px;
+border-radius:6px;
+background:#35a7ff;
+border:none;
+color:white;
+}
+
+/* ===== テーマ一致 ===== */
+body.night #memoToggle,
+body.night #linkToggle{
+background:#000;
+border:1px solid #333;
+color:#aaa;
+}
+body.stealth #memoToggle,
+body.stealth #linkToggle{
+background:#000;
+border:1px solid #222;
+color:#777;
+}
+body.oled #memoToggle,
+body.oled #linkToggle{
+background:#050505;
+border:1px solid #080808;
+color:#666;
+}
+
+body.night #memoPanel,
+body.night #linkPanel,
+body.stealth #memoPanel,
+body.stealth #linkPanel,
+body.oled #memoPanel,
+body.oled #linkPanel{
+background:#000;
+}
+</style>
+
+<script>
+// ===== MEMO =====
+const memoBtn = document.getElementById("memoToggle");
+const memoPanel = document.getElementById("memoPanel");
+const memoInput = document.getElementById("memoInput");
+
+memoBtn.onclick = ()=>{
+memoPanel.classList.toggle("open");
+memoBtn.classList.toggle("active");
+
+linkPanel.classList.remove("open");
+linkToggle.classList.remove("active");
+};
+
+memoInput.value = localStorage.getItem("memo") || "";
+memoInput.oninput = ()=>localStorage.setItem("memo",memoInput.value);
+
+// ===== LINK =====
+const linkToggle = document.getElementById("linkToggle");
+const linkPanel = document.getElementById("linkPanel");
+const linkList = document.getElementById("linkList");
+
+let linkTabs = JSON.parse(localStorage.getItem("linkTabs")||"[]");
+
+linkToggle.onclick = ()=>{
+linkPanel.classList.toggle("open");
+linkToggle.classList.toggle("active");
+
+memoPanel.classList.remove("open");
+memoBtn.classList.remove("active");
+};
+
+function renderLinkTabs(){
+linkList.innerHTML="";
+linkTabs.forEach((l,i)=>{
+const div=document.createElement("div");
+div.className="linkItem";
+
+div.innerHTML=`<span>${l.name}</span><button>x</button>`;
+
+div.onclick=()=>{
+let url=l.url;
+if(!url.startsWith("http")) url="https://"+url;
+window.open(url,"_blank");
+};
+
+div.querySelector("button").onclick=(e)=>{
+e.stopPropagation();
+linkTabs.splice(i,1);
+saveLinkTabs();
+};
+
+linkList.appendChild(div);
+});
+}
+
+function addLinkTab(){
+const name=document.getElementById("linkName");
+const url=document.getElementById("linkURL");
+if(!name.value||!url.value)return;
+
+linkTabs.push({name:name.value,url:url.value});
+saveLinkTabs();
+
+name.value="";
+url.value="";
+}
+
+function saveLinkTabs(){
+localStorage.setItem("linkTabs",JSON.stringify(linkTabs));
+renderLinkTabs();
+}
+
+document.getElementById("linkName").addEventListener("keydown",e=>{
+if(e.key==="Enter") addLinkTab();
+});
+document.getElementById("linkURL").addEventListener("keydown",e=>{
+if(e.key==="Enter") addLinkTab();
+});
+
+renderLinkTabs();
 </script>
 </body>
 </html>
